@@ -1,0 +1,48 @@
+# 🐍 Python štandardné ignorované súbory
+__pycache__/
+*.pyc
+*.py[cod]
+*.egg-info/
+*.log
+*.tmp
+
+# 📦 Virtuálne prostredia
+venv/
+env/
+.venv/
+
+# 🗂️ VS Code / Visual Studio / IDE súbory
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# 📚 Cache a dočasné súbory
+.cache/
+*.cache
+*.bak
+
+# 🎙️ Audio a výstupné súbory
+*.wav
+*.mp3
+*.flac
+
+# 🤖 Hugging Face modely (ak ich nechceš verzovať)
+models/
+*.pt
+*.bin
+*.safetensors
+
+# 📄 Výstupné textové súbory
+output.txt
+
+# 💾 Jupyter notebook checkpointy
+.ipynb_checkpoints/
+
+# 🛠️ OS špecifické súbory
+.DS_Store
+Thumbs.db
+desktop.ini
+"models/whisper-medium/model.safetensors" 
