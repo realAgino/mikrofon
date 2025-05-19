@@ -1,7 +1,16 @@
-﻿import os
-import sounddevice as sd # type: ignore
+﻿import os, sys
+import sounddevice as sd  # type: ignore
 import numpy as np
 from transformers import pipeline, WhisperProcessor, WhisperForConditionalGeneration
+import pyttsx3
+from datetime import datetime
+import edge_tts
+import asyncio
+from playsound import playsound
+
+
+
+
 
 text_file_path = "output.txt"  # Súbor na uloženie rozpoznaného textu
 
@@ -36,16 +45,18 @@ samplerate = 16000
 duration = 10  # Dĺžka nahrávky v sekundách
 
 print("🎙️ Nahrávam cez mikrofón...")
-audio = sd.rec(int(duration * samplerate), samplerate=samplerate, channels=1, dtype='float32')
-sd.wait()
+try:
+    audio = sd.rec(int(duration * samplerate), samplerate=samplerate, channels=1, dtype='float32')
+    sd.wait()
+except Exception as e:
+    print(f"Chyba pri nahrávaní zvuku: {e}")
+    exit(1)
 
 # Prevod na 1D pole
 audio_data = np.squeeze(audio)
 
 print("✅ Zvuk nahratý, rozpoznávam reč...")
 
-# Rozpoznanie reči priamo z numpy array bez súborov
-#result = asr(audio_data,chunk_length_s=10, max_new_tokens=256)
 result = asr(
     audio_data,
     chunk_length_s=10,
@@ -65,19 +76,40 @@ if "stačí" in recognized_text.lower():
 
 # Uloženie výsledku do textového súboru
 with open(text_file_path, "a", encoding="utf-8") as text_file:
-    text_file.write(recognized_text + "\n")
+    text_file.write(f"{datetime.now()}: {recognized_text}\n")
 
-# 📄 Prečítanie obsahu súboru
-print("\n📄 Obsah súboru:")
-def new_func(text_file):
-    print(text_file.read())
 
-with open(text_file_path, "r", encoding="utf-8") as text_file:
-    new_func(text_file)
 
-with open(text_file_path, "r", encoding="utf-8") as text_file:
-    new_func(text_file)
+
+
+
+
+text_file_path = "output.txt"
+
+# 1. Načítaj posledný riadok zo súboru
+with open(text_file_path, "r", encoding="utf-8") as f:
+    lines = f.readlines()
+    if lines:
+        posledny = lines[-1].strip().split(":", 1)[-1].strip()
+    else:
+        posledny = "Súbor je prázdny."
+
+print(f"🗣️ Čítam: {posledny}")
+
+# 2. Slovenský hlas cez edge-tts (Jakub, alebo zmeň na Viktoria)
+async def tts(text):
+    communicate = edge_tts.Communicate(text, "sk-SK-JakubNeural")
+    print(f"Text na čítanie: '{posledny}'")
+    await communicate.save("output.mp3")
+
+asyncio.run(tts(posledny))
+
+# 3. Prehrať audio
+playsound("output.mp3")
+
+
+
 
 print("\n✅ Skript úspešne dokončený.")
-import sys
+
 sys.exit(0)

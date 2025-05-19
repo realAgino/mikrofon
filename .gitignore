@@ -12,6 +12,7 @@ env/
 .venv/
 
 # 🗂️ VS Code / Visual Studio / IDE súbory
+.vs
 .vscode/
 .idea/
 *.suo
